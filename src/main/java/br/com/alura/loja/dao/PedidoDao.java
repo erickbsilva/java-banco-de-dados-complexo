@@ -55,4 +55,23 @@ String jpql = "SELECT new br.com.alura.loja.dto.RelatorioDeVendasDTO("
 return em.createQuery(jpql, RelatorioDeVendasDTO.class).getResultList();
 	}
 
+	// Método que busca um Pedido já trazendo junto o Cliente associado.
+	//
+	// O detalhe importante aqui é o uso de JOIN FETCH:
+	// - O JOIN FETCH força o carregamento imediato da associação (EAGER),
+	//   mesmo que a relação esteja configurada como LAZY.
+	// - Isso evita o problema de LazyInitializationException,
+	//   pois garante que o Cliente será carregado junto com o Pedido
+	//   dentro da mesma consulta.
+	// - A query retorna apenas o Pedido com o id informado,
+	//   mas já com o Cliente populado, pronto para uso.
+	//
+	// Em resumo: JOIN FETCH é usado quando precisamos garantir
+	// que a entidade relacionada esteja disponível sem precisar
+	// de outra consulta posterior.
+	public Pedido buscarPedidoComCliente(Long id) {
+		return em.createQuery("SELECT p FROM Pedido p JOIN FETCH p.cliente WHERE p.id = :id", Pedido.class)
+				.setParameter("id", id)
+				.getSingleResult();
+	}
 }
