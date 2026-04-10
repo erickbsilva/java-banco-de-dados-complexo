@@ -82,6 +82,9 @@ public class CadastroDePedido {
         clienteDao.cadastrar(cliente);
 
         em.getTransaction().commit();
+
+        em.find(Categoria.class, new CategoriaId("CELULARES", "xpto"));
+
         em.close();
     }
 

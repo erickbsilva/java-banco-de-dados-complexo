@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "produtos")
 @NamedQuery(name = "Produto.produtosPorCategoria",
-query = "SELECT p FROM Produto p WHERE p.categoria.nome = :nome")
+query = "SELECT p FROM Produto p WHERE p.categoria.id.nome = :nome")
 /**
  * @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
  *
@@ -32,7 +32,34 @@ query = "SELECT p FROM Produto p WHERE p.categoria.nome = :nome")
  * todas as entidades da hierarquia em uma única tabela,
  * aceitando a trade-off de possíveis colunas vazias.
  */
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+/**
+ * @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+ *
+ * Essa estratégia de herança no JPA cria uma tabela separada
+ * para cada classe concreta da hierarquia.
+ *
+ * - Cada subclasse terá sua própria tabela, contendo
+ *   tanto os atributos herdados da classe pai quanto os específicos.
+ *
+ * - Não existe uma tabela única para a classe base,
+ *   então consultas polimórficas (ex.: buscar todos os tipos de entidade)
+ *   podem gerar UNION entre várias tabelas.
+ *
+ * Vantagens:
+ *   - Estrutura mais limpa: cada tabela reflete exatamente os atributos da classe.
+ *   - Evita colunas nulas, diferente do SINGLE_TABLE.
+ *
+ * Desvantagens:
+ *   - Consultas polimórficas podem ser mais pesadas,
+ *     pois exigem UNION entre tabelas.
+ *   - Pode ser menos performático em cenários com muitas subclasses.
+ *
+ * Em resumo: TABLE_PER_CLASS é útil quando queremos
+ * evitar colunas nulas e manter tabelas mais específicas,
+ * aceitando o custo de consultas mais complexas.
+ */
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Produto {
 
 	@Id
