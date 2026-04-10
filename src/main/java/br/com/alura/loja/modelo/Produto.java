@@ -9,6 +9,30 @@ import javax.persistence.*;
 @Table(name = "produtos")
 @NamedQuery(name = "Produto.produtosPorCategoria",
 query = "SELECT p FROM Produto p WHERE p.categoria.nome = :nome")
+/**
+ * @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+ *
+ * Essa anotação define como a herança entre entidades será mapeada no banco.
+ *
+ * - SINGLE_TABLE: todas as classes da hierarquia de herança
+ *   (classe pai e subclasses) são armazenadas em uma única tabela.
+ *
+ * - O JPA cria uma coluna discriminadora (normalmente chamada "DTYPE")
+ *   para identificar qual tipo de entidade cada linha representa.
+ *
+ * Vantagens:
+ *   - Simples e eficiente em termos de performance (uma tabela só).
+ *   - Consultas mais rápidas, sem necessidade de JOINs.
+ *
+ * Desvantagens:
+ *   - A tabela pode ficar com muitas colunas nulas,
+ *     já que cada subclasse pode ter atributos específicos.
+ *
+ * Em resumo: é uma estratégia prática quando queremos manter
+ * todas as entidades da hierarquia em uma única tabela,
+ * aceitando a trade-off de possíveis colunas vazias.
+ */
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Produto {
 
 	@Id
